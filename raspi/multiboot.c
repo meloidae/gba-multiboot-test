@@ -29,13 +29,13 @@ uint32_t writeSPI32NoMessage(uint32_t write_bits) {
 uint32_t writeSPI32(uint32_t write_bits, char *message) {
     uint32_t read_bits = writeSPI32NoMessage(write_bits);
 
-    fprintf(stdout, "sent: 0x%80x, received: 0x%80x; %s\n", write_bits, read_bits, message);
+    fprintf(stdout, "sent: 0x%08x, received: 0x%08x; %s\n", write_bits, read_bits, message);
 
     return read_bits;
 } // writeSPI32
 
 uint32_t waitSPI32(uint32_t write_bits, uint32_t compare_bits, char *message) {
-    fprintf(stdout, "%s 0x%80x\n", message, compare_bits); 
+    fprintf(stdout, "%s 0x%08x\n", message, compare_bits); 
     uint32_t read_bits;
 
     while(1) {
