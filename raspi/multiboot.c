@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <wiringPi.h>
 
@@ -51,7 +52,7 @@ uint32_t waitSPI32(uint32_t write_bits, uint32_t compare_bits, char *message) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        perror("Please provide the location of multiboot gba file");
+        fprintf(stderr, "Please provide the location of multiboot gba file");
         exit(1);
     } // if
     char *mb_filename = argv[1];
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]) {
     FILE *fp = fopen(mb_filename, "rb");
 
     if (fp == NULL) {
-        perror("Failed to open file: %s", mb_filename);
+        fprintf(stderr, "Failed to open file: %s", mb_filename);
         exit(1);
     } // if
 
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]) {
     long file_size = (ftell(fp) + 0x0f) & 0xfffffff0;
 
     if (file_size > 0x40000) {
-        perror("File too big: max file size is 256kb");
+        fprintf(stderr, "File too big: max file size is 256kb");
         exit(1);
     } // if
 
@@ -105,7 +106,7 @@ int main(int argc, char *argv[]) {
     read_bits = writeSPI32(0x000063d1, "Send palette data");
     read_bits = writeSPI32(0x000063d1, "Send palette data, receive 0x73hh****"); 
 
-    uint32_t m = ((read_bits & 0x00ff0000) >>  8) + 0xffff00d1 // keymul
+    uint32_t m = ((read_bits & 0x00ff0000) >>  8) + 0xffff00d1; // keymul
     uint32_t hh = ((read_bits & 0x00ff0000) >> 16) + 0xf; // handshake data
 
     uint32_t handshake_bits = (((read_bits >> 16) + 0xf) & 0xff) | 0x00006400;
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
         write_bits = getc(fp);
         write_bits |= (getc(fp) << 8);
         write_bits |= (getc(fp) << 16);
-        write_bits |= (getc(fp) << 32);
+        write_bits |= (getc(fp) << 24);
 
         // temporarily store for encryption
         write_tmp = write_bits;
@@ -137,7 +138,7 @@ int main(int argc, char *argv[]) {
             } else {
                 c >>= 1;
             } // else
-            w >>= 1;
+            write_bits >>= 1;
         } // for 
 
         m = (0x6f646573 * m) + 1;
