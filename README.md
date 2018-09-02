@@ -1,6 +1,6 @@
 # gba-multiboot-test
 
-Test code for multibooting on GBA from raspberry pi
+Test code for multibooting GBA from raspberry pi
 
 took codes from Ken Kaarvik & akkera102
 
