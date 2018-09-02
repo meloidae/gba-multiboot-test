@@ -44,13 +44,18 @@ void WaitSPI32(uint32_t w, uint32_t comp, char* msg)
 	} while(r != comp);
 }
 
-void main(void)
+int main(int argc, char *argv[])
 {
-	FILE *fp = fopen("multiboot_mb.gba", "rb");
+    FILE *fp;
+    if (argc < 2) {
+	    fp = fopen("multiboot_mb.gba", "rb");
+    } else {
+        fp = fopen(argv[1], "rb");
+    } // else
 	if(fp == NULL)
 	{
 		printf("Err: Can't open file\n");
-		return;
+        exit(1);
 	}
 
 	fseek(fp, 0L, SEEK_END);
@@ -59,7 +64,7 @@ void main(void)
 	if(fsize > 0x40000)
 	{
 		printf("Err: Max file size 256kB\n");
-		return;
+		exit(1);
 	}
 
 	fseek(fp, 0L, SEEK_SET);
