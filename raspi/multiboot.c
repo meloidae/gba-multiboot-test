@@ -40,9 +40,8 @@ uint32_t waitSPI32(uint32_t write_bits, uint32_t compare_bits, char *message) {
 
     while(1) {
         read_bits = writeSPI32NoMessage(write_bits);
+        usleep(SLEEP_DURATION);
         if (read_bits != compare_bits) {
-            fprintf(stderr, "%s 0x%08x\n", "received:", read_bits);
-            usleep(SLEEP_DURATION);
             continue;
         } // if 
         break;
@@ -134,8 +133,7 @@ int main(int argc, char *argv[]) {
 
         for (i = 0; i < 32; i++) {
             if ((c ^ write_bits) & 0x01) { // if c xor write_bits has carry
-                c >>= 1;
-                c ^= x;
+                c = (c >> 1) ^ x;
             } else {
                 c >>= 1;
             } // else
@@ -153,8 +151,7 @@ int main(int argc, char *argv[]) {
 
     for (i = 0; i < 32; i++) {
         if ((c ^ f) & 0x01) { // if c xor f has carry
-            c >>= 1;
-            c ^= x;
+            c = (c >> 1) ^ x;
         } else {
             c >>= 1;
         } // else
