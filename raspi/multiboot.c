@@ -18,10 +18,10 @@ uint32_t writeSPI32NoMessage(uint32_t write_bits) {
     wiringPiSPIDataRW(0, &buffer, 4);
 
     uint32_t read_bits = 0;
-    read_bits += buffer[0] << 24;
-    read_bits += buffer[1] << 16;
-    read_bits += buffer[2] << 8;
-    read_bits += buffer[3];
+    read_bits |= buffer[0] << 24;
+    read_bits |= buffer[1] << 16;
+    read_bits |= buffer[2] << 8;
+    read_bits |= buffer[3];
 
     return read_bits;
 } // writeSPI32NoMessage
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 
     fprintf(stdout, "Sending header\n");
 
-    for (i = 0; i < 0x5f; i++) {
+    for (i = 0; i <= 0x5f; i++) {
         write_bits = getc(fp);
         write_bits = getc(fp) << 8 | write_bits;
         file_position += 2;
@@ -106,8 +106,6 @@ int main(int argc, char *argv[]) {
     uint32_t m = ((read_bits & 0x00ff0000) >>  8) + 0xffff00d1; // keymul
     uint32_t hh = ((read_bits & 0x00ff0000) >> 16) + 0xf; // handshake data
 
-    // uint32_t handshake_bits = (((read_bits >> 16) + 0xf) & 0xff) | 0x00006400;
-
     read_bits = writeSPI32((((read_bits >> 16) + 0xf) & 0xff) | 0x00006400, "Send handshake data");
     read_bits = writeSPI32((file_size - 0x190) / 4, "Send length info, receive seed 0x**cc****");
 
@@ -121,9 +119,9 @@ int main(int argc, char *argv[]) {
     while (file_position < file_size) {
         // bits to write
         write_bits = getc(fp);
-        write_bits = getc(fp) << 8 | write_bits;
-        write_bits = getc(fp) << 16 | write_bits;
-        write_bits = getc(fp) << 24 | write_bits;
+        write_bits |= getc(fp) << 8;
+        write_bits |= getc(fp) << 16;
+        write_bits |= getc(fp) << 24;
 
         // temporarily store for encryption
         write_tmp = write_bits;
@@ -141,7 +139,7 @@ int main(int argc, char *argv[]) {
 
         writeSPI32NoMessage(write_tmp ^ ((~(0x02000000 + file_position)) + 1) ^ m ^ k);
 
-        file_position = file_position + 4;
+        file_position += 4;
     } // while
 
     fclose(fp); // Sent all file data so closing file
