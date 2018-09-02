@@ -41,6 +41,7 @@ uint32_t waitSPI32(uint32_t write_bits, uint32_t compare_bits, char *message) {
     while(1) {
         read_bits = writeSPI32NoMessage(write_bits);
         if (read_bits != compare_bits) {
+            fprintf(stderr, "%s 0x%08x\n", "received:", read_bits);
             usleep(SLEEP_DURATION);
             continue;
         } // if 
