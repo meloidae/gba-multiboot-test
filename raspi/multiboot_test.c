@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
 	fseek(fp, 0L, SEEK_END);
 	long fsize = (ftell(fp) + 0x0f) & 0xfffffff0;
 
+    printf("file_size=%d\n", fsize);
+
 	if(fsize > 0x40000)
 	{
 		printf("Err: Max file size 256kB\n");

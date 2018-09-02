@@ -38,14 +38,10 @@ uint32_t waitSPI32(uint32_t write_bits, uint32_t compare_bits, char *message) {
     fprintf(stdout, "%s 0x%08x\n", message, compare_bits); 
     uint32_t read_bits;
 
-    while(1) {
+    do {
         read_bits = writeSPI32NoMessage(write_bits);
         usleep(SLEEP_DURATION);
-        if (read_bits != compare_bits) {
-            continue;
-        } // if 
-        break;
-    } // while
+    } while(read_bits != compare_bits);
 } // waitSPI32
 
 
@@ -69,6 +65,7 @@ int main(int argc, char *argv[]) {
     fseek(fp, 0L, SEEK_END);
     long file_size = (ftell(fp) + 0x0f) & 0xfffffff0;
 
+    printf("file_size=%d\n", file_size);
     if (file_size > 0x40000) {
         fprintf(stderr, "File too big: max file size is 256kb");
         exit(1);
