@@ -18,10 +18,10 @@ uint32_t writeSPI32NoMessage(uint32_t write_bits) {
     wiringPiSPIDataRW(0, &buffer, 4);
 
     uint32_t read_bits = 0;
-    read_bits |= buffer[0] << 24;
-    read_bits |= buffer[1] << 16;
-    read_bits |= buffer[2] << 8;
-    read_bits |= buffer[3];
+    read_bits += buffer[0] << 24;
+    read_bits += buffer[1] << 16;
+    read_bits += buffer[2] << 8;
+    read_bits += buffer[3];
 
     return read_bits;
 } // writeSPI32NoMessage
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 
     for (i = 0; i < 0x5f; i++) {
         write_bits = getc(fp);
-        write_bits = getc(fp) << 8 | w;
+        write_bits = getc(fp) << 8 | write_bits;
         file_position += 2;
 
         read_bits = writeSPI32NoMessage(write_bits);
