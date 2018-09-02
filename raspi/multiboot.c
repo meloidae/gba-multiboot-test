@@ -11,7 +11,7 @@ uint32_t writeSPI32NoMessage(uint32_t write_bits) {
     buffer[3] = write_bits & 0x000000ff;
     buffer[2] = (write_bits & 0x0000ff00) >> 8;
     buffer[1] = (write_bits & 0x00ff0000) >> 16;
-    buffer[0] = (write_bits & 0xff0000) >> 24;
+    buffer[0] = (write_bits & 0xff000000) >> 24;
 
     // write/read
     wiringPiSPIDataRW(0, &buffer, 4);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     waitSPI32(0x00006202, 0x72026202, "Looking for GBA");
 
     read_bits = writeSPI32(0x00006202, "Found GBA");
-	read_bits = writeSPI32(0x00006102, "Recognition OK");
+    read_bits = writeSPI32(0x00006102, "Recognition OK");
 
     fprintf(stdout, "Sending header\n");
 
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
     read_bits = writeSPI32(0x00006202, "Exchange master/slave info again");
 
     read_bits = writeSPI32(0x000063d1, "Send palette data");
-	read_bits = writeSPI32(0x000063d1, "Send palette data, receive 0x73hh****"); 
+    read_bits = writeSPI32(0x000063d1, "Send palette data, receive 0x73hh****"); 
 
     uint32_t m = ((read_bits & 0x00ff0000) >>  8) + 0xffff00d1 // keymul
     uint32_t hh = ((read_bits & 0x00ff0000) >> 16) + 0xf; // handshake data
@@ -162,9 +162,9 @@ int main(int argc, char *argv[]) {
     waitSPI32(0x00000065, 0x00750065, "Wait for GBA to respond with CRC");
 
     read_bits = writeSPI32(0x00000066, "GBA ready with CRC");
-	read_bits = writeSPI32(c, "Let's exchange CRC!");
+    read_bits = writeSPI32(c, "Let's exchange CRC!");
 
-	fprintf(stdout, "CRC ...hope they match!\n");
-	fprintf(stdout, "MulitBoot done\n");
+    fprintf(stdout, "CRC ...hope they match!\n");
+    fprintf(stdout, "MulitBoot done\n");
 
 } // main
