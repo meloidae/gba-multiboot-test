@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
     uint32_t i;
 
     // Set up SPI mode
-    wiringPiSPISetupMode(0, 100000, 3);
+    wiringPiSPISetupMode(0, 256000, 3);
     
     // Wait until GBA returns slave info
     waitSPI32(0x00006202, 0x72026202, "Looking for GBA");
